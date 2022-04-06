@@ -1,6 +1,11 @@
 package com.spring.boot.fundamentals.springbootfundamentals.bean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class MyBeanWithDependencyImplement implements MyBeanWithDependency {
+  
+  Log LOGGER = LogFactory.getLog(MyBeanWithDependencyImplement.class);
   
   MyOperation myOperation;
 
@@ -10,7 +15,10 @@ public class MyBeanWithDependencyImplement implements MyBeanWithDependency {
 
   @Override
   public void printWithDependency() {
-    System.out.println(myOperation.sum(5));
+    LOGGER.info("print with dependency method");
+    int number = 5;
+    LOGGER.debug("the number sent as parameter of dependency operation is: " + number);
+    System.out.println(myOperation.sum(number));
     System.out.println("MyBeanWithDependencyImplement");
   }
 

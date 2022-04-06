@@ -6,6 +6,8 @@ import com.spring.boot.fundamentals.springbootfundamentals.bean.MyBeanWithProper
 import com.spring.boot.fundamentals.springbootfundamentals.components.ComponentDependency;
 import com.spring.boot.fundamentals.springbootfundamentals.pojo.UserPojo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +15,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class SpringBootFundamentalsApplication implements CommandLineRunner {
+
+	private final Log LOGGER = LogFactory.getLog(SpringBootFundamentalsApplication.class);
 
 	private ComponentDependency 	componentDependency;
 	private MyBean 								myBean;
@@ -44,6 +48,12 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 		myBean.print();
 		System.out.println(myBeanWithProperties.function());
 		System.out.println(userPojo.getEmail() + " " + userPojo.getPassword() + " " + userPojo.getAge());
+		try {
+			int value = 10/0;
+			LOGGER.debug("value is: " + value);
+		} catch (Exception e) {
+			LOGGER.error("error at divide by zero", e);
+		}
 	}
 
 }
