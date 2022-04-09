@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Sort;
 
 @SpringBootApplication
 public class SpringBootFundamentalsApplication implements CommandLineRunner {
@@ -54,6 +55,19 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		examplesPrev();
 		saveUsersInDB();
+		getInformationJpqlFromUser();
+	}
+
+	private void getInformationJpqlFromUser() {
+		LOGGER.info(
+			"user found: " +
+			userRepository.findByUserEmail("rengoku@test.com")
+			.orElseThrow(() -> new RuntimeException("user not found"))
+		);
+
+		userRepository.findByNameAndSort("tomioka", Sort.by("id").descending())
+			.stream()
+			.forEach(user -> LOGGER.info("user with sort method " + user));
 	}
 
 	public void saveUsersInDB() {
@@ -88,7 +102,20 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 		user6.setEmail("tomioka@test.com");
 		user6.setBirthDate(LocalDate.of(1990, 1, 1));
 
-		List<User> list = Arrays.asList(user1, user2, user3, user4, user5, user6);
+		User user7 = new User();
+		user7.setName("tomioka2");
+		user7.setEmail("tomioka2@test.com");
+		user7.setBirthDate(LocalDate.of(1990, 1, 1));
+
+		List<User> list = Arrays.asList(
+			user1,
+			user2,
+			user3,
+			user4,
+			user5,
+			user6,
+			user7
+		);
 
 		list.stream().forEach(userRepository::save);
 
