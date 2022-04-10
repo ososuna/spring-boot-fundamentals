@@ -59,6 +59,7 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 	}
 
 	private void getInformationJpqlFromUser() {
+		
 		LOGGER.info(
 			"user found: " +
 			userRepository.findByUserEmail("rengoku@test.com")
@@ -68,6 +69,16 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 		userRepository.findByNameAndSort("tomioka", Sort.by("id").descending())
 			.stream()
 			.forEach(user -> LOGGER.info("user with sort method " + user));
+
+		userRepository.findByName("mitsuri")
+			.stream()
+			.forEach(user -> LOGGER.info("user with name query  method " + user));
+
+		LOGGER.info(
+			"user with email and name query method: " +
+			userRepository.findByNameAndEmail("iguro", "iguro@test.com")
+			.orElseThrow(() -> new RuntimeException("user not found"))
+		);
 	}
 
 	public void saveUsersInDB() {
