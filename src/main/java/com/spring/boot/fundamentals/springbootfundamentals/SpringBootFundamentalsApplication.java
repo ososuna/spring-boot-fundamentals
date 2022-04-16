@@ -20,6 +20,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Sort;
 
+import net.bytebuddy.asm.Advice.Local;
+
 @SpringBootApplication
 public class SpringBootFundamentalsApplication implements CommandLineRunner {
 
@@ -60,25 +62,45 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 
 	private void getInformationJpqlFromUser() {
 		
-		LOGGER.info(
-			"user found: " +
-			userRepository.findByUserEmail("rengoku@test.com")
-			.orElseThrow(() -> new RuntimeException("user not found"))
-		);
+		// LOGGER.info(
+		// 	"user found: " +
+		// 	userRepository.findByUserEmail("rengoku@test.com")
+		// 	.orElseThrow(() -> new RuntimeException("user not found"))
+		// );
 
-		userRepository.findByNameAndSort("tomioka", Sort.by("id").descending())
+		// userRepository.findByNameAndSort("tomioka", Sort.by("id").descending())
+		// 	.stream()
+		// 	.forEach(user -> LOGGER.info("user with sort method " + user));
+
+		// userRepository.findByName("mitsuri")
+		// 	.stream()
+		// 	.forEach(user -> LOGGER.info("user with name query  method " + user));
+
+		// LOGGER.info(
+		// 	"user with email and name query method: " +
+		// 	userRepository.findByNameAndEmail("iguro", "iguro@test.com")
+		// 	.orElseThrow(() -> new RuntimeException("user not found"))
+		// );
+
+		// userRepository.findByNameLike("%t%")
+		// 	.stream()
+		// 	.forEach(user -> LOGGER.info("user with name like query method " + user));
+		
+		// userRepository.findByNameOrEmail("mitsuri", null)
+		// 	.stream()
+		// 	.forEach(user -> LOGGER.info("user with name or email query method " + user));
+		
+		// userRepository.findByBirthDateBetween(
+		// 	LocalDate.of(1980, 12, 1),
+		// 	LocalDate.of(1990, 2, 1)
+		// )
+		// 	.stream()
+		// 	.forEach(user -> LOGGER.info("user with birth date between query method " + user));
+
+		userRepository.findByNameContainingOrderByIdAsc("tomioka")
 			.stream()
-			.forEach(user -> LOGGER.info("user with sort method " + user));
+			.forEach(user -> LOGGER.info("user with name like and order by query method " + user));
 
-		userRepository.findByName("mitsuri")
-			.stream()
-			.forEach(user -> LOGGER.info("user with name query  method " + user));
-
-		LOGGER.info(
-			"user with email and name query method: " +
-			userRepository.findByNameAndEmail("iguro", "iguro@test.com")
-			.orElseThrow(() -> new RuntimeException("user not found"))
-		);
 	}
 
 	public void saveUsersInDB() {
