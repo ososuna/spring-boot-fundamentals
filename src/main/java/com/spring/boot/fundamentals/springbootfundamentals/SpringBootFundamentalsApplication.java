@@ -11,6 +11,7 @@ import com.spring.boot.fundamentals.springbootfundamentals.components.ComponentD
 import com.spring.boot.fundamentals.springbootfundamentals.entity.User;
 import com.spring.boot.fundamentals.springbootfundamentals.pojo.UserPojo;
 import com.spring.boot.fundamentals.springbootfundamentals.repository.UserRepository;
+import com.spring.boot.fundamentals.springbootfundamentals.service.UserService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Sort;
 
 @SpringBootApplication
 public class SpringBootFundamentalsApplication implements CommandLineRunner {
@@ -30,6 +32,7 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 	private MyBeanWithProperties 	myBeanWithProperties;
 	private UserPojo 							userPojo;
 	private UserRepository 				userRepository;
+	private UserService 					userService;
 
 	public SpringBootFundamentalsApplication(
 		@Qualifier("componentTwoImplement") ComponentDependency componentDependency,
@@ -37,7 +40,8 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 		MyBeanWithDependency myBeanWithDependency,
 		MyBeanWithProperties myBeanWithProperties,
 		UserPojo userPojo,
-		UserRepository userRepository
+		UserRepository userRepository,
+		UserService userService
 	) {
 		this.componentDependency 	= componentDependency;
 		this.myBean 							= myBean;
@@ -45,6 +49,7 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 		this.myBeanWithProperties = myBeanWithProperties;
 		this.userPojo 						= userPojo;
 		this.userRepository 			= userRepository;
+		this.userService 					= userService;
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootFundamentalsApplication.class, args);
@@ -54,49 +59,87 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		examplesPrev();
 		saveUsersInDB();
-		getInformationJpqlFromUser();
+		// getInformationJpqlFromUser();
+		saveWithErrorTransactional();
+	}
+
+	private void saveWithErrorTransactional() {
+		
+		User test1 = new User();
+		test1.setName("test transactional 1");
+		test1.setEmail("test1@test.com");
+		test1.setBirthDate(LocalDate.of(1990, 1, 1));
+		
+		User test2 = new User();
+		test2.setName("test transactional 2");
+		test2.setEmail("test2@test.com");
+		test2.setBirthDate(LocalDate.of(1990, 1, 1));
+		
+		User test3 = new User();
+		test3.setName("test transactional 3");
+		test3.setEmail("test2@test.com");
+		test3.setBirthDate(LocalDate.of(1990, 1, 1));
+		
+		User test4 = new User();
+		test4.setName("test transactional 4");
+		test4.setEmail("test4@test.com");
+		test4.setBirthDate(LocalDate.of(1990, 1, 1));
+
+
+		List<User> users = Arrays.asList(test1, test2, test3, test4);
+
+		try {
+			userService.saveTransactional(users);
+		} catch (Exception e) {
+			LOGGER.error("transactional method error", e);
+		}
+
+		userService.getAllUsers()
+			.stream()
+			.forEach(user -> LOGGER.info("user with get all users" + user.toString()));
+
 	}
 
 	private void getInformationJpqlFromUser() {
 		
-		// LOGGER.info(
-		// 	"user found: " +
-		// 	userRepository.findByUserEmail("rengoku@test.com")
-		// 	.orElseThrow(() -> new RuntimeException("user not found"))
-		// );
+		LOGGER.info(
+			"user found: " +
+			userRepository.findByUserEmail("rengoku@test.com")
+			.orElseThrow(() -> new RuntimeException("user not found"))
+		);
 
-		// userRepository.findByNameAndSort("tomioka", Sort.by("id").descending())
-		// 	.stream()
-		// 	.forEach(user -> LOGGER.info("user with sort method " + user));
+		userRepository.findByNameAndSort("tomioka", Sort.by("id").descending())
+			.stream()
+			.forEach(user -> LOGGER.info("user with sort method " + user));
 
-		// userRepository.findByName("mitsuri")
-		// 	.stream()
-		// 	.forEach(user -> LOGGER.info("user with name query  method " + user));
+		userRepository.findByName("mitsuri")
+			.stream()
+			.forEach(user -> LOGGER.info("user with name query  method " + user));
 
-		// LOGGER.info(
-		// 	"user with email and name query method: " +
-		// 	userRepository.findByNameAndEmail("iguro", "iguro@test.com")
-		// 	.orElseThrow(() -> new RuntimeException("user not found"))
-		// );
+		LOGGER.info(
+			"user with email and name query method: " +
+			userRepository.findByNameAndEmail("iguro", "iguro@test.com")
+			.orElseThrow(() -> new RuntimeException("user not found"))
+		);
 
-		// userRepository.findByNameLike("%t%")
-		// 	.stream()
-		// 	.forEach(user -> LOGGER.info("user with name like query method " + user));
+		userRepository.findByNameLike("%t%")
+			.stream()
+			.forEach(user -> LOGGER.info("user with name like query method " + user));
 		
-		// userRepository.findByNameOrEmail("mitsuri", null)
-		// 	.stream()
-		// 	.forEach(user -> LOGGER.info("user with name or email query method " + user));
+		userRepository.findByNameOrEmail("mitsuri", null)
+			.stream()
+			.forEach(user -> LOGGER.info("user with name or email query method " + user));
 		
-		// userRepository.findByBirthDateBetween(
-		// 	LocalDate.of(1980, 12, 1),
-		// 	LocalDate.of(1990, 2, 1)
-		// )
-		// 	.stream()
-		// 	.forEach(user -> LOGGER.info("user with birth date between query method " + user));
+		userRepository.findByBirthDateBetween(
+			LocalDate.of(1980, 12, 1),
+			LocalDate.of(1990, 2, 1)
+		)
+			.stream()
+			.forEach(user -> LOGGER.info("user with birth date between query method " + user));
 
-		// userRepository.findByNameContainingOrderByIdAsc("tomioka")
-		// 	.stream()
-		// 	.forEach(user -> LOGGER.info("user with name like and order by query method " + user));
+		userRepository.findByNameContainingOrderByIdAsc("tomioka")
+			.stream()
+			.forEach(user -> LOGGER.info("user with name like and order by query method " + user));
 
 		userRepository.getAllByBirthDateAndEmail(
 			LocalDate.of(1990, 1, 1),
