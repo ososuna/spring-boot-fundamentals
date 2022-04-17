@@ -18,9 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.Sort;
-
-import net.bytebuddy.asm.Advice.Local;
 
 @SpringBootApplication
 public class SpringBootFundamentalsApplication implements CommandLineRunner {
@@ -97,9 +94,16 @@ public class SpringBootFundamentalsApplication implements CommandLineRunner {
 		// 	.stream()
 		// 	.forEach(user -> LOGGER.info("user with birth date between query method " + user));
 
-		userRepository.findByNameContainingOrderByIdAsc("tomioka")
+		// userRepository.findByNameContainingOrderByIdAsc("tomioka")
+		// 	.stream()
+		// 	.forEach(user -> LOGGER.info("user with name like and order by query method " + user));
+
+		userRepository.getAllByBirthDateAndEmail(
+			LocalDate.of(1990, 1, 1),
+			"rengoku@test.com"
+		)
 			.stream()
-			.forEach(user -> LOGGER.info("user with name like and order by query method " + user));
+			.forEach(user -> LOGGER.info("user with birth date and email query method " + user));
 
 	}
 
