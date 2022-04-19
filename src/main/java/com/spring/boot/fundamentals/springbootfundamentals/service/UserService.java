@@ -31,7 +31,7 @@ public class UserService {
   }
 
   public List<User> getAllUsers() {
-    return userRepository.findAll(Sort.by("id"));
+    return (List<User>) userRepository.findAll(Sort.by("id"));
   }
 
   public User save(User user) {
