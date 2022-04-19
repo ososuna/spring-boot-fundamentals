@@ -34,4 +34,24 @@ public class UserService {
     return userRepository.findAll(Sort.by("id"));
   }
 
+  public User save(User user) {
+    return userRepository.save(user);
+  }
+
+  public void delete(Long id) {
+    userRepository.deleteById(id);
+  }
+
+  public User update(Long id, User user) {
+    return userRepository.findById(id)
+      .map(
+        existingUser -> {
+          existingUser.setName(user.getName());
+          existingUser.setEmail(user.getEmail());
+          existingUser.setBirthDate(user.getBirthDate());
+          return userRepository.save(existingUser);
+        }
+      ).orElseThrow(() -> new RuntimeException("user not found"));
+  }
+
 }

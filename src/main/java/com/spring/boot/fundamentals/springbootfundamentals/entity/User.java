@@ -12,9 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -43,7 +41,6 @@ public class User {
   private LocalDate birthDate;
 
   @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-  @JsonManagedReference
   private List<Post> posts;
   
 }
